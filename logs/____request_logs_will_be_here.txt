@@ -1,0 +1,12 @@
+If you run main.py with the -log flag it will save the request in RAW html/json format here.
+
+Example
+
+
+python3 main.py -log
+
+
+or 
+
+
+python main.py -log 
