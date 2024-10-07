@@ -1,0 +1,5 @@
+tqdm
+request
+argparse
+colorama
+configparser
