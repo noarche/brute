@@ -1,5 +1,6 @@
 import signal
 import sys
+import os
 from config_loader import list_configs, load_config
 from combo_loader import list_combos, load_combos
 from hit_handler import save_hit
@@ -38,16 +39,29 @@ def main_menu():
             run_bruteforce(config, combo_list, selected_config)
         except (ValueError, IndexError):
             print("Invalid choice. Please try again.")
+        except KeyboardInterrupt:
+            print("\nReturning to main menu...")
+            continue
 
 def run_bruteforce(config, combo_list, selected_config):
     config_name_without_ext = os.path.splitext(selected_config)[0]  # Get the config name without extension
-    for combo in tqdm(combo_list, desc="Processing combos"):
-        result = process_combo(config, combo, config_name_without_ext)  # Pass the config name without extension
-        if result == "ban":
-            print("Ban detected. Stopping the bruteforce.")
-            break
-        elif result == "hit":
-            print("Hit found!")
-        elif result == "fail":
-            print("Failed attempt.")
+    try:
+        for combo in tqdm(combo_list, desc="Processing combos"):
+            result = process_combo(config, combo, config_name_without_ext)  # Pass the config name without extension
+            if result == "ban":
+                print("Ban detected. Stopping the bruteforce.")
+                break
+            elif result == "hit":
+                print("Hit found!")
+            elif result == "fail":
+                print("Failed attempt.")
+    except KeyboardInterrupt:
+        print("\nBruteforce interrupted. Returning to main menu...")
+    finally:
+        main_menu()
 
+# Ensure the signal handler is set up
+signal.signal(signal.SIGINT, signal_handler)
+
+if __name__ == "__main__":
+    main_menu()
